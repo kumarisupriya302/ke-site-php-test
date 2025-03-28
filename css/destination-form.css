@@ -1,0 +1,144 @@
+.destination-form-container {
+    max-width: 42rem;
+    margin: 3rem auto;
+    padding: 1rem;
+}
+
+.destination-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.destination-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .destination-form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.destination-form-field {
+    margin-bottom: 1.5rem;
+}
+
+.destination-form-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.destination-form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.destination-form-field input,
+.destination-form-field select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.destination-form-field input:focus,
+.destination-form-field select:focus {
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    outline: none;
+}
+
+.custom-control {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+.custom-control input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.destination-form-submit {
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    width: 100%;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #1557b0;
+}
+
+/* IntlTelInput customization */
+.iti {
+    width: 100%;
+}
+
+.iti__flag-container:hover .iti__selected-flag {
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .destination-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .destination-form {
+        padding: 1.5rem;
+    }
+}
+
+/* Form validation styles */
+.destination-form-field input:invalid,
+.destination-form-field select:invalid {
+    border-color: #dc3545;
+}
+
+.destination-form-field input:invalid:focus,
+.destination-form-field select:invalid:focus {
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+/* Loading state */
+.btn-primary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s infinite linear;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.destination-form-space {
+    margin-bottom: 2rem;
+}
