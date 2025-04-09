@@ -26,6 +26,7 @@ if (!isset($user['user_type'])) {
 
 ?>
 <!DOCTYPE html>
+<!-- This is the main dashboard page for the admin panel. It includes a sidebar for navigation and displays statistics about destinations, resorts, and campaigns. -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
