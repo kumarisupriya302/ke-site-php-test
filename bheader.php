@@ -29,6 +29,7 @@ if (!isset($_SESSION['user'])) {
 }
 ?>
 <!DOCTYPE html>
+<!-- This is the header file for the Karma Experience admin panel. It includes Bootstrap, Tailwind CSS, and Lucide Icons for styling and functionality. -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
