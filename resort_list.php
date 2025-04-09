@@ -8,6 +8,11 @@ $user = $_SESSION['user'];
 require 'db.php';
 $stmt = $pdo->query("SELECT r.*, d.destination_name FROM resorts r JOIN destinations d ON r.destination_id = d.id ORDER BY d.destination_name, r.resort_name");
 $resorts = $stmt->fetchAll();
+
+// Filter resorts to show only active ones in the frontend
+$frontendResorts = array_filter($resorts, function($resort) {
+    return $resort['is_active'] == 1;
+});
 ?>
 <?php include 'bheader.php'; ?>
 <!DOCTYPE html>
@@ -22,27 +27,104 @@ $resorts = $stmt->fetchAll();
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
-    .sidebar-collapsed {
-      width: 64px;
+    body {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
     }
-    .sidebar-collapsed .sidebar-item-text {
-      display: none;
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .sidebar-collapsed .sidebar-icon {
-      text-align: center;
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     }
-    /* Simple switch styling */
+
+    .table-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    th {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background-color: #f3f4f6;
+    }
+
+    td {
+      font-size: 0.875rem;
+      color: #4b5563;
+    }
+
+    .action-button {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: white;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .bg-yellow-500:hover {
+      background-color: #d97706;
+    }
+
+    .bg-red-500:hover {
+      background-color: #b91c1c;
+    }
+
+    .add-resort-button {
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+      transition: all 0.3s ease;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .add-resort-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Toggle switch styles */
     .switch {
       position: relative;
       display: inline-block;
-      width: 50px;
-      height: 24px;
+      width: 40px;
+      height: 20px;
     }
-    .switch input { 
+
+    .switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
@@ -51,50 +133,28 @@ $resorts = $stmt->fetchAll();
       right: 0;
       bottom: 0;
       background-color: #ccc;
-      transition: .4s;
-      border-radius: 24px;
+      transition: 0.4s;
+      border-radius: 20px;
     }
+
     .slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
+      height: 14px;
+      width: 14px;
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: .4s;
+      transition: 0.4s;
       border-radius: 50%;
     }
+
     input:checked + .slider {
-      background-color: #4ade80; /* green */
+      background-color: #34d399;
     }
+
     input:checked + .slider:before {
-      transform: translateX(26px);
-    }
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    #resorts-table th {
-      position: relative;
-    }
-    #resorts-table th.asc::after {
-      content: '↑';
-      position: absolute;
-      right: 8px;
-    }
-    #resorts-table th.desc::after {
-      content: '↓';
-      position: absolute;
-      right: 8px;
+      transform: translateX(20px);
     }
   </style>
 </head>
@@ -136,75 +196,54 @@ $resorts = $stmt->fetchAll();
     </aside>
     <!-- Main Content -->
     <main class="flex-1 p-8">
-      <!-- Breadcrumb -->
-      <nav class="mb-4 text-sm text-gray-600" aria-label="Breadcrumb">
-        <ol class="list-reset flex">
-          <li><a href="dashboard.php" class="text-blue-600 hover:underline">Dashboard</a></li>
-          <li><span class="mx-2">/</span></li>
-          <li class="text-gray-600">Resorts</li>
-        </ol>
-      </nav>
-      <h2 class="text-3xl font-bold mb-6">Resorts List</h2>
-      <div class="mb-4 flex items-center space-x-4">
-        <input type="text" id="search" placeholder="Search resorts..." class="border rounded p-2 flex-grow">
-        <select id="filter-status" class="border rounded p-2">
-          <option value="">All Statuses</option>
-          <option value="1">Active</option>
-          <option value="0">Inactive</option>
-        </select>
+      <div class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Resorts List</h1>
+        <a href="create_or_edit_resort.php" class="add-resort-button inline-block mb-6">Add New Resort</a>
+        <div class="card p-6">
+          <table id="resorts-table" class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="table-header">
+              <tr>
+                <th class="py-3 px-6">Resort Name</th>
+                <th class="py-3 px-6">Destination</th>
+                <th class="py-3 px-6">Active</th>
+                <th class="py-3 px-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($resorts as $resort): ?>
+              <tr class="hover:bg-gray-50" id="resort-row-<?php echo $resort['id']; ?>">
+                <td class="py-3 px-6 text-gray-700 font-medium">
+                  <?php echo htmlspecialchars($resort['resort_name']); ?>
+                </td>
+                <td class="py-3 px-6 text-gray-500">
+                  <?php echo htmlspecialchars($resort['destination_name']); ?>
+                </td>
+                <td class="py-3 px-6 text-center">
+                  <label class="switch">
+                    <input type="checkbox" class="toggle-active" data-resort-id="<?php echo $resort['id']; ?>" <?php echo ($resort['is_active'] == 1) ? 'checked' : ''; ?>>
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="py-3 px-6">
+                  <a id="view-button-<?php echo $resort['id']; ?>" 
+                     class="action-button <?php echo ($resort['is_active'] == 1) ? 'bg-blue-500' : 'bg-gray-400 cursor-not-allowed'; ?>" 
+                     <?php if ($resort['is_active'] == 1): ?>
+                       href="<?php echo htmlspecialchars($resort['resort_slug']); ?>"
+                     <?php else: ?>
+                       disabled
+                     <?php endif; ?>
+                     data-href="<?php echo htmlspecialchars($resort['resort_slug']); ?>">
+                    View
+                  </a>
+                  <a href="create_or_edit_resort.php?destination_id=<?php echo $resort['destination_id']; ?>&resort_id=<?php echo $resort['id']; ?>" class="action-button bg-yellow-500 mr-2">Edit</a>
+                  <a href="delete_resort.php?id=<?php echo $resort['id']; ?>" class="action-button bg-red-500" onclick="return confirm('Are you sure you want to delete this resort?');">Delete</a>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="mb-4 flex items-center space-x-4">
-        <select id="bulk-action" class="border rounded p-2">
-          <option value="">Bulk Actions</option>
-          <option value="activate">Activate</option>
-          <option value="deactivate">Deactivate</option>
-          <option value="delete">Delete</option>
-        </select>
-        <button id="apply-bulk-action" class="bg-blue-500 text-white px-4 py-2 rounded">Apply</button>
-      </div>
-      <?php if(count($resorts) > 0): ?>
-        <table id="resorts-table" class="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr>
-              <th class="py-2 px-4 border-b">Resort Name</th>
-              <th class="py-2 px-4 border-b">Destination</th>
-              <th class="py-2 px-4 border-b">Active</th>
-              <th class="py-2 px-4 border-b">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach($resorts as $resort): ?>
-            <tr id="resort-row-<?php echo $resort['id']; ?>">
-              <td class="py-2 px-4 border-b">
-                <input type="checkbox" class="resort-checkbox" value="<?php echo $resort['id']; ?>">
-                <?php echo htmlspecialchars($resort['resort_name']); ?>
-              </td>
-              <td class="py-2 px-4 border-b"><?php echo htmlspecialchars($resort['destination_name']); ?></td>
-              <td class="py-2 px-4 border-b text-center">
-                <!-- Toggle switch for active status -->
-                <label class="switch">
-                  <input type="checkbox" class="toggle-active" data-resort-id="<?php echo $resort['id']; ?>" <?php echo ($resort['is_active'] == 1) ? 'checked' : ''; ?>>
-                  <span class="slider"></span>
-                </label>
-              </td>
-              <td class="py-2 px-4 border-b">
-                <a href="create_or_edit_resort.php?destination_id=<?php echo $resort['destination_id']; ?>&resort_id=<?php echo $resort['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</a>
-                <?php if ($resort['is_active'] == 1): ?>
-                    <a href="<?php echo htmlspecialchars($resort['resort_slug']); ?>" target="_blank" class="bg-blue-500 text-white px-2 py-1 rounded view-button">View</a>
-                <?php else: ?>
-                    <a href="404.php" target="_blank" class="bg-gray-400 text-white px-2 py-1 rounded view-button">View</a>
-                <?php endif; ?>
-                <a href="delete_resort.php?id=<?php echo $resort['id']; ?>" class="bg-red-500 text-white px-2 py-1 rounded" onclick="return confirm('Are you sure you want to delete this resort?');">Delete</a>
-              </td>
-            </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      <?php else: ?>
-        <p>No resorts found.</p>
-      <?php endif; ?>
-      <br>
-      <a href="create_or_edit_resort.php" class="bg-blue-500 text-white px-4 py-2 rounded">Create New Resort</a>
     </main>
   </div>
   <script>
@@ -217,15 +256,6 @@ $resorts = $stmt->fetchAll();
     async function updateResortStatus(checkbox) {
       const resortId = checkbox.getAttribute('data-resort-id');
       const newStatus = checkbox.checked ? 1 : 0;
-      const row = document.getElementById('resort-row-' + resortId);
-      const viewButton = row.querySelector('.view-button');
-      const switchContainer = checkbox.parentElement;
-
-      // Show loading spinner
-      const spinner = document.createElement('div');
-      spinner.className = 'loading-spinner';
-      switchContainer.style.position = 'relative';
-      switchContainer.appendChild(spinner);
 
       try {
         const response = await fetch('update_resort_status.php', {
@@ -239,15 +269,18 @@ $resorts = $stmt->fetchAll();
 
         if (!data.success) throw new Error(data.message || 'Failed to update status');
 
-        // Update view button
+        // Dynamically enable or disable the 'View' button
+        const viewButton = document.querySelector(`#view-button-${resortId}`);
         if (newStatus === 1) {
-          viewButton.href = data.resort_slug;
-          viewButton.classList.remove('bg-gray-400');
+          viewButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
           viewButton.classList.add('bg-blue-500');
+          viewButton.href = viewButton.getAttribute('data-href');
+          viewButton.removeAttribute('disabled');
         } else {
-          viewButton.href = '404.php';
           viewButton.classList.remove('bg-blue-500');
-          viewButton.classList.add('bg-gray-400');
+          viewButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+          viewButton.removeAttribute('href');
+          viewButton.setAttribute('disabled', 'true');
         }
 
         // Show success notification
@@ -272,9 +305,6 @@ $resorts = $stmt->fetchAll();
           showConfirmButton: false,
           timer: 3000
         });
-      } finally {
-        // Remove loading spinner
-        switchContainer.removeChild(spinner);
       }
     }
 

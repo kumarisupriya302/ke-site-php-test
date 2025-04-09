@@ -44,6 +44,79 @@ if (!isset($user['user_type'])) {
     .sidebar-collapsed .sidebar-icon {
       text-align: center;
     }
+    
+    /* Enhanced Styles */
+    body {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    }
+    
+    .dashboard-card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Card specific gradients */
+    .dashboard-card.destinations {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    }
+    
+    .dashboard-card.resorts {
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    }
+    
+    .dashboard-card.campaigns {
+      background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .dashboard-card h3,
+    .dashboard-card .stats-number {
+      color: white !important;
+      -webkit-text-fill-color: white !important;
+    }
+    
+    .dashboard-card h3 {
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    
+    .stats-icon {
+      font-size: 4rem;
+      opacity: 0.15;
+      position: absolute;
+      right: 1rem;
+      bottom: -0.5rem;
+      color: white;
+    }
+    
+    #sidebar {
+      background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .welcome-text {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-icon {
+      color: white;
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body class="bg-gray-100">
@@ -57,34 +130,34 @@ if (!isset($user['user_type'])) {
         </button>
       </div>
       <nav class="mt-6">
-        <a href="dashboard.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="dashboard.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-tachometer-alt mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Dashboard</span>
         </a>
         <?php if($user['user_type'] === 'super_admin'): ?>
-          <a href="manage_users.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+          <a href="manage_users.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
             <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Manage Users</span>
           </a>
         <?php endif; ?>
-        <a href="destination_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="destination_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-map-marker-alt mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Manage Destinations</span>
         </a>
-        <a href="resort_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="resort_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-hotel mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Manage Resorts</span>
         </a>
-        <a href="marketing_template_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="marketing_template_list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-envelope-open-text mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Marketing Templates</span>
         </a>
-        <a href="campaign_dashboard.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="campaign_dashboard.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-bullhorn mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Campaign Dashboard</span>
         </a>
-        <a href="blog.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="blog.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-bullhorn mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Blog</span>
         </a>
-        <a href="blog-list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center">
+        <a href="blog-list.php" class="block py-3 px-6 text-gray-700 hover:bg-blue-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-bullhorn mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Blog List</span>
         </a>
 
-        <a href="logout.php" class="block py-3 px-6 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center">
+        <a href="logout.php" class="block py-3 px-6 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center sidebar-link">
           <i class="fas fa-sign-out-alt mr-2 sidebar-icon"></i> <span class="sidebar-item-text">Logout</span>
         </a>
       </nav>
@@ -99,20 +172,38 @@ if (!isset($user['user_type'])) {
           <li class="text-gray-600">Welcome</li>
         </ol>
       </nav>
-      <h2 class="text-3xl font-bold mb-6">Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h2>
+      <h2 class="text-3xl font-bold mb-6 welcome-text">Welcome, <?php echo htmlspecialchars($user['username']); ?>!</h2>
       <!-- Dashboard Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-2">Total Destinations</h3>
-          <p class="text-3xl font-bold"><?php echo $dashboardStats->total_destinations; ?></p>
+        <div class="dashboard-card destinations p-6 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg font-semibold mb-2">Total Destinations</h3>
+              <p class="stats-number"><?php echo $dashboardStats->total_destinations; ?></p>
+            </div>
+            <i class="fas fa-map-marker-alt text-xl card-icon"></i>
+          </div>
+          <i class="fas fa-map-marker-alt stats-icon"></i>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-2">Total Resorts</h3>
-          <p class="text-3xl font-bold"><?php echo $dashboardStats->total_resorts; ?></p>
+        <div class="dashboard-card resorts p-6 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg font-semibold mb-2">Total Resorts</h3>
+              <p class="stats-number"><?php echo $dashboardStats->total_resorts; ?></p>
+            </div>
+            <i class="fas fa-hotel text-xl card-icon"></i>
+          </div>
+          <i class="fas fa-hotel stats-icon"></i>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-          <h3 class="text-lg font-semibold mb-2">Active Campaigns</h3>
-          <p class="text-3xl font-bold"><?php echo $dashboardStats->active_campaigns; ?></p>
+        <div class="dashboard-card campaigns p-6 relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="text-lg font-semibold mb-2">Active Campaigns</h3>
+              <p class="stats-number"><?php echo $dashboardStats->active_campaigns; ?></p>
+            </div>
+            <i class="fas fa-bullhorn text-xl card-icon"></i>
+          </div>
+          <i class="fas fa-bullhorn stats-icon"></i>
         </div>
       </div>
     </main>

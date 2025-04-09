@@ -21,6 +21,10 @@ $users = $stmt->fetchAll();
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    body {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    }
+
     .sidebar-collapsed {
       width: 64px;
     }
@@ -29,6 +33,86 @@ $users = $stmt->fetchAll();
     }
     .sidebar-collapsed .sidebar-icon {
       text-align: center;
+    }
+
+    .card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .table-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    th {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e5e7eb;
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background-color: #f3f4f6;
+    }
+
+    td {
+      font-size: 0.875rem;
+      color: #4b5563;
+    }
+
+    .action-button {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: white;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .action-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .bg-yellow-500:hover {
+      background-color: #d97706;
+    }
+
+    .bg-red-500:hover {
+      background-color: #b91c1c;
+    }
+
+    .add-user-button {
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+      transition: all 0.3s ease;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .add-user-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
@@ -78,29 +162,37 @@ $users = $stmt->fetchAll();
           <li class="text-gray-600">Manage Users</li>
         </ol>
       </nav>
-      <h2 class="text-3xl font-bold mb-6">Manage Users</h2>
-      <a href="create_user.php" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">Add New User</a>
-      <table class="min-w-full bg-white border border-gray-200">
-        <thead>
-          <tr>
-            <th class="py-2 px-4 border-b">Username</th>
-            <th class="py-2 px-4 border-b">User Type</th>
-            <th class="py-2 px-4 border-b">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach($users as $user): ?>
-          <tr>
-            <td class="py-2 px-4 border-b"><?php echo htmlspecialchars($user['username']); ?></td>
-            <td class="py-2 px-4 border-b"><?php echo $user['user_type']; ?></td>
-            <td class="py-2 px-4 border-b">
-              <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</a>
-              <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="bg-red-500 text-white px-2 py-1 rounded" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
-            </td>
-          </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+      <div class="container mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Manage Users</h1>
+        <a href="create_user.php" class="add-user-button inline-block mb-6">Add New User</a>
+        <div class="card p-6">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <thead class="table-header">
+              <tr>
+                <th class="py-3 px-6">Username</th>
+                <th class="py-3 px-6">User Type</th>
+                <th class="py-3 px-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($users as $user): ?>
+              <tr class="hover:bg-gray-50">
+                <td class="py-3 px-6 text-gray-700 font-medium">
+                  <?php echo htmlspecialchars($user['username']); ?>
+                </td>
+                <td class="py-3 px-6 text-gray-500">
+                  <?php echo htmlspecialchars($user['user_type']); ?>
+                </td>
+                <td class="py-3 px-6">
+                  <a href="edit_user.php?id=<?php echo $user['id']; ?>" class="action-button bg-yellow-500 mr-2">Edit</a>
+                  <a href="delete_user.php?id=<?php echo $user['id']; ?>" class="action-button bg-red-500" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                </td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
   <script>
